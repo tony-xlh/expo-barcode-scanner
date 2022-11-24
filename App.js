@@ -1,9 +1,11 @@
 import * as React from 'react';
-import { Dimensions, Platform, SafeAreaView, StyleSheet, Text } from 'react-native';
+import { Dimensions, Platform, StyleSheet, Text } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { Camera, useCameraDevices, useFrameProcessor } from 'react-native-vision-camera';
 import { decode } from 'vision-camera-dynamsoft-barcode-reader';
 import * as REA from 'react-native-reanimated';
 import { Polygon, Svg } from 'react-native-svg';
+import { StatusBar } from 'expo-status-bar';
 
 export default function App() {
   const [hasPermission, setHasPermission] = React.useState(false);
@@ -69,43 +71,45 @@ export default function App() {
   }, []);
 
   return (
-      <SafeAreaView style={styles.container}>
-        {device != null &&
-        hasPermission && (
-        <>
-            <Camera
-            style={StyleSheet.absoluteFill}
-            device={device}
-            isActive={true}
-            frameProcessor={frameProcessor}
-            frameProcessorFps={5}
-            />
-            {barcodeResults.map((barcode, idx) => (
-            <Text key={idx} style={styles.barcodeText}>
-                {barcode.barcodeFormat +": "+ barcode.barcodeText}
-            </Text>
-            ))}
-        </>)}
-        <Svg style={[StyleSheet.absoluteFill]} viewBox={getViewBox()}>
-
-          {barcodeResults.map((barcode, idx) => (
-            <Polygon key={idx}
-            points={getPointsData(barcode)}
-            fill="lime"
-            stroke="green"
-            opacity="0.5"
-            strokeWidth="1"
+    <SafeAreaView style={styles.container}>
+      <StatusBar hidden={true} style="auto" />
+      {device != null &&
+      hasPermission && (
+      <>
+          <Camera
+          style={StyleSheet.absoluteFill}
+          device={device}
+          isActive={true}
+          frameProcessor={frameProcessor}
+          frameProcessorFps={5}
           />
+          {barcodeResults.map((barcode, idx) => (
+          <Text key={idx} style={styles.barcodeText}>
+              {barcode.barcodeFormat +": "+ barcode.barcodeText}
+          </Text>
           ))}
-          
-        </Svg>
-      </SafeAreaView>
+      </>)}
+      <Svg style={[StyleSheet.absoluteFill]} 
+        viewBox={getViewBox()}
+        preserveAspectRatio="xMidYMid slice">
+
+        {barcodeResults.map((barcode, idx) => (
+          <Polygon key={idx}
+          points={getPointsData(barcode)}
+          fill="lime"
+          stroke="green"
+          opacity="0.5"
+          strokeWidth="1"
+        />
+        ))}
+      </Svg>
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    flex:1
+    flex:1,
   },
   barcodeText: {
     fontSize: 20,
