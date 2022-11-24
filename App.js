@@ -61,7 +61,7 @@ export default function App() {
       height = frameHeight;
     }
     return [width, height];
-  } 
+  }
 
   React.useEffect(() => {
     (async () => {
